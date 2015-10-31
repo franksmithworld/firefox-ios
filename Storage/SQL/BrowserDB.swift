@@ -227,6 +227,15 @@ public class BrowserDB {
 }
 
 extension BrowserDB {
+    func vacuum() {
+        db.transaction { connection in
+            connection.vacuum()
+            return true
+        }
+    }
+}
+
+extension BrowserDB {
     public class func varlist(count: Int) -> String {
         return "(" + Array(count: count, repeatedValue: "?").joinWithSeparator(", ") + ")"
     }

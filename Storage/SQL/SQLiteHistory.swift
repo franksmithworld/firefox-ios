@@ -822,8 +822,10 @@ extension SQLiteHistory: SyncableHistory {
         "DELETE FROM \(TableHistory) WHERE " +
         "is_deleted = 1 AND guid IN \(inClause)"
 
+        // This is a good time to vacuum -- we just deleted something, after a sync.
         let args: Args = guids.map { $0 as AnyObject }
         return self.db.run(sql, withArgs: args)
+          >>== effect(self.db.vacuum)
     }
 
     public func markAsSynchronized(guids: [GUID], modified: Timestamp) -> Deferred<Maybe<Timestamp>> {
